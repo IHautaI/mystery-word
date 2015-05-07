@@ -1,4 +1,4 @@
-from mystery_word import *
+import mystery_word as mw
 
 import os
 
@@ -6,27 +6,64 @@ import os
 def main():
 
     words = import_words('/usr/share/dict/words')
+    loop(words)
+
+    while play_again():
+        loop(words)
+
+    os.system('clear')
+
+
+def loop(words):
+    
     welcome()
 
     word_list = ask_difficulty(words)
-    guesses = 0
+    word = mw.random_word(word_list)
+    guesses = []
+    correct_guess = []
 
-    def loop():
-        while entry != 'q':
-            word = random_word(word_list)
-            number_of_letters(word)
-            guess = guess()
+    number_of_letters(word)
 
-            if guess == 'quit':
-                entry = 'q'
+    while True:
+        if len(guesses) > 7:
+            you_lose(word)
+            break
+
+        this_guess = guess()
+        while this_guess in guesses or this_guess in correct_guess:
+            print("You already guessed {}!".format(this_guess.upper()))
+            this_guess = guess()
+
+        guesses.append(this_guess)
+
+        if this_guess == 'quit':
+            os.system('clear')
+            break
+
+        if guesses[-1] in word:
+            correct_guess.append(guesses.pop())
+
+        if mw.is_word_complete(word,correct_guess):
+            you_win(word)
+            break
+
+        os.system('clear')
+        print("Incorrect Guesses ({}, 8 max): [ {} ]".format(len(guesses),
+            " ".join(guesses).upper()))
+        print(mw.display_word(word,correct_guess))
 
 
-    loop()
+def you_lose(word):
+    os.system('clear')
+    print("You did not guess the word!")
+    print("The word was: {}".format(word))
 
 
-    while play_again():
-        loop()
-
+def you_win(word):
+    os.system('clear')
+    print("You guessed the word!\nCongratulations!")
+    print("It was {}".format(word))
 
 
 def play_again():
@@ -36,10 +73,11 @@ def play_again():
         return play_again()
 
     if yes_no == 'y':
+        os.system('clear')
         return True
     else:
+        os.system('clear')
         return False
-
 
 
 def ask_difficulty(words):
@@ -48,21 +86,21 @@ def ask_difficulty(words):
     diff = diff.lower()
 
     if diff not in 'emh':
-        ask_difficulty(words)
+        return ask_difficulty(words)
     os.system('clear')
 
-    if diff = 'e':
-        word_list = easy_words(words)
-    elif diff = 'm'
-        word_list = medium_words(words)
+    if diff == 'e':
+        word_list = mw.easy_words(words)
+    elif diff == 'm':
+        word_list = mw.medium_words(words)
     else:
-        word_list = hard_words(words)
+        word_list = mw.hard_words(words)
 
     return word_list
 
 
 def number_of_letters(word):
-    print("The number of letters in your word is: " + len(word))
+    print("The number of letters in your word is: {}".format(len(word)))
 
 
 def welcome():
@@ -71,16 +109,16 @@ def welcome():
 
 def guess():
 
-    guess = input("Your Guess: ")
+    this_guess = input("Type \"quit\" to exit. Your Guess: ")
 
-    if len(guess)>1 or not guess.isalpha():
-        if guess.lower() == 'quit':
+    if len(this_guess)>1 or not this_guess.isalpha():
+        if this_guess.lower() == 'quit':
             return 'quit'
 
-        print("Not a letter. Type Quit to exit.\nGuess again:")
-        guess()
+        print("Not a letter. Guess again:")
+        return guess()
 
-    return guess
+    return this_guess
 
 
 def import_words(path):
