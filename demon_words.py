@@ -41,7 +41,7 @@ def loop(words):
 
     while True:
         if len(guesses) > 7:
-            you_lose(random.choice(check_families(guesses, word_list, word)))
+            you_lose(random.choice(word_list))
             break
 
         this_guess = guess()
@@ -57,7 +57,8 @@ def loop(words):
             break
 
         # check families here, set word, reduce list to chosen family
-        new_word, word_list = demon.check_families(guesses[-1], word_list, word)
+        new_word, word_list = demon.check_families(guesses[-1], word_list,
+                                                   word, len(guesses)-1)
 
         if new_word != word:
             correct_guess.append(guesses.pop())

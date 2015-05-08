@@ -1,12 +1,25 @@
 import re
 import itertools
+import random
 
-# recursive search to get all possibilities
-# from replacing _'s with guess, multiple allowed
-# use filter_list here to make the families
-# then evaluate which to use and
-# return corresponding word
-def check_families(guess, word_list, word):
+def demonize(families, num):
+    """
+    picks whether or not a
+    guess will be correct
+    based on number of guesses wrong
+    and current word families
+    """
+    #choice = random.choice([True, False])
+
+    if num == 7:
+        return max(families, key=lambda x: len(x[1]))
+    else:
+        return random.choice(families)
+
+        #return max(families[:-1], key=lambda x: len(x[1]))
+
+
+def check_families(guess, word_list, word, num):
     """
     filters word_list and sorts into families
     based on matches to word with the guess
@@ -14,10 +27,9 @@ def check_families(guess, word_list, word):
     then evaluates which family is best
     and returns the matching new word
     """
-
     families = []
     indices = pull_indices(word) # index of '_'s in list
-    combos = searcher(indices) # finds all combinations of indices
+    combos = searcher(indices) # list of combinations of indices
 
     for combo in combos:
 
@@ -26,10 +38,11 @@ def check_families(guess, word_list, word):
         if filter_list(word_list, term, guess):
             families.append((term, filter_list(word_list, term, guess)))
 
-    families = sorted(families, key=lambda x: len(x[1]), reverse = True)
-    if families:
-        word, fam = families[0]
+    #families.append((word,word_list))
+    #families = sorted(families, key=lambda x: len(x[1]), reverse = True)
 
+    if families:
+        word, fam = demonize(families, num)
     else:
         fam = word_list
 
@@ -78,6 +91,13 @@ def replace(word, indices, letter):
     return return_word
 
 
+def match(entry,letters):
+    """
+    matches letters in entry
+    """
+    return re.match(r'{}'.format(letters), entry)
+
+
 def filter_list(word_list, word, repl=None):
     """
     takes word and finds
@@ -85,9 +105,8 @@ def filter_list(word_list, word, repl=None):
     with [^{repl}] subbed
     for the '_' entries where needed
     """
-
     letters = [letter for letter in word]
-    
+
     if repl != None:
         repl = '[^{}]'.format(repl)
         repl_index = []
@@ -99,8 +118,5 @@ def filter_list(word_list, word, repl=None):
     letters = ''.join(letters)
     if repl != None:
         letters = replace(word, repl_index, repl)
-
-    def match(entry,letters):
-        return re.match(r'{}'.format(letters), entry)
 
     return [entry for entry in word_list if match(entry,letters)]
