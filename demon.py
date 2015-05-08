@@ -26,7 +26,6 @@ def check_families(guess, word_list, word):
         if filter_list(word_list, term, guess):
             families.append((term, filter_list(word_list, term, guess)))
 
-    #families.append((word, word_list))
     families = sorted(families, key=lambda x: len(x[1]), reverse = True)
     if families:
         word, fam = families[0]
@@ -88,6 +87,7 @@ def filter_list(word_list, word, repl=None):
     """
 
     letters = [letter for letter in word]
+    
     if repl != None:
         repl = '[^{}]'.format(repl)
         repl_index = []
@@ -100,12 +100,7 @@ def filter_list(word_list, word, repl=None):
     if repl != None:
         letters = replace(word, repl_index, repl)
 
-    return_list = []
-    for entry in word_list:
-        new = re.match(r'{}'.format(letters), entry)
-        if new:
-            return_list.append(entry)
+    def match(entry,letters):
+        return re.match(r'{}'.format(letters), entry)
 
-    #word_list = [entry for entry in word_list if entry not in remove_list]
-
-    return return_list
+    return [entry for entry in word_list if match(entry,letters)]
