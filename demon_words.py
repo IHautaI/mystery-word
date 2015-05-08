@@ -1,7 +1,9 @@
+# for hard mode
 import mystery_word as mw
 
 import os
-
+import random
+import re
 
 def main():
 
@@ -15,19 +17,21 @@ def main():
 
 
 def loop(words):
-    os.system('clear')
+
     welcome()
 
-    word_list = ask_difficulty(words)
-    word = mw.random_word(word_list)
+    word_length = ask_difficulty(words)
+    word_length = random.choice(word_length)
+
+    word_list = [item for item in word_list if len(item) == word_length]
     guesses = []
     correct_guess = []
 
-    number_of_letters(word)
+    number_of_letters(word_len)
 
     while True:
         if len(guesses) > 7:
-            you_lose(word)
+            you_lose(random.choice(check_families(guesses,word_list,word)))
             break
 
         this_guess = guess()
@@ -41,17 +45,48 @@ def loop(words):
             os.system('clear')
             break
 
-        if guesses[-1] in word:
-            correct_guess.append(guesses.pop())
+        # check families here, set word, reduce list to chosen family
+        word = check_families(guesses[-1],word_list,word)
+        word_list = filter_list(word_list,word)
 
-        if mw.is_word_complete(word,correct_guess):
+        if len(correct_guesses) == word_length:
             you_win(word)
             break
 
         os.system('clear')
         print("Incorrect Guesses ({}, 8 max): [ {} ]".format(len(guesses),
             " ".join(guesses).upper()))
-        print(mw.display_word(word,correct_guess))
+
+        print(display(word))
+
+
+def display(word):
+    letters = [letter for letter in word]
+    return " ".join(letters)
+
+#recursive search to get all possibilities
+#from replacing _'s with guess, multiple allowed
+def check_families(guess,word_list,word):
+    families = []
+
+    return word
+
+#Tested
+def filter_list(word_list,word):
+    word_list = word_list[:]
+
+    letters = [letter for letter in word]
+    for index in range(len(letters)):
+        if letters[index] == '_':
+            letters[index] = '\w'
+
+    letters = ''.join(letters)
+
+    for word in word_list:
+        if not re.match(r'{}'.format(letters),word):
+            word_list.remove(word)
+
+    return word_list
 
 
 def you_lose(word):
@@ -90,17 +125,17 @@ def ask_difficulty(words):
     os.system('clear')
 
     if diff == 'e':
-        word_list = mw.easy_words(words)
+        word_list = [4,5,6]
     elif diff == 'm':
-        word_list = mw.medium_words(words)
+        word_list = [6,7,8]
     else:
-        word_list = mw.hard_words(words)
+        word_list = range(8,max(words,key=len))
 
     return word_list
 
 
-def number_of_letters(word):
-    print("The number of letters in your word is: {}".format(len(word)))
+def number_of_letters(word_len):
+    print("The number of letters in your word is: {}".format(word_len))
 
 
 def welcome():
