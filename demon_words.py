@@ -1,5 +1,6 @@
 # for hard mode
 # import mystery_word as mw
+import demon
 
 import os
 import random
@@ -7,7 +8,11 @@ import re
 
 
 def main():
-
+    """
+    Runs the main loop named loop
+    and calls play_again to ask
+    if you want to play again
+    """
     words = import_words('/usr/share/dict/words')
     loop(words)
 
@@ -18,7 +23,10 @@ def main():
 
 
 def loop(words):
+    """
+    The main loop
 
+    """
     welcome()
 
     word_length = ask_difficulty(words)
@@ -62,6 +70,10 @@ def loop(words):
 
 
 def display(word):
+    """
+    adds spaces between letters/underscores
+    in word and returns it
+    """
     letters = [letter for letter in word]
     return " ".join(letters)
 
@@ -73,9 +85,23 @@ def display(word):
 # return corresponding word
 def check_families(guess, word_list, word):
     families = []
+    indices = pull_indices(word)
+
 
     return word
 
+def pull_indices(word):
+    """
+    finds the underscores in word
+    and returns their indices as
+    a list
+    """
+    index_list = []
+    for index,letter in enumerate(word):
+        if letter == '_':
+            index_list.append(index)
+
+    return index_list
 
 # Tested
 def filter_list(word_list, word):

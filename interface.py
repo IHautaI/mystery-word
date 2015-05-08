@@ -4,7 +4,11 @@ import os
 
 
 def main():
-
+    """
+    Runs the main loop named loop
+    and calls play_again to ask
+    if you want to play again
+    """
     words = import_words('/usr/share/dict/words')
     loop(words)
 
@@ -15,6 +19,11 @@ def main():
 
 
 def loop(words):
+    """
+    The main loop
+    displays information to the user
+    and processes input from the user
+    """
     os.system('clear')
     welcome()
 
@@ -55,18 +64,29 @@ def loop(words):
 
 
 def you_lose(word):
+    """
+    Displays a lost game message
+    """
     os.system('clear')
     print("You did not guess the word!")
     print("The word was: {}".format(word))
 
 
 def you_win(word):
+    """
+    Displays a won game message
+    """
     os.system('clear')
     print("You guessed the word!\nCongratulations!")
     print("It was {}".format(word))
 
 
 def play_again():
+    """
+    Asks if player wants to play again
+    and returns True if they do
+    False otherwise
+    """
     yes_no = input("Would you like to play again? [Y]es [n]o : ")
 
     if len(yes_no) > 1 or yes_no.lower() not in 'yn':
@@ -81,6 +101,11 @@ def play_again():
 
 
 def ask_difficulty(words):
+    """
+    Asks the player what difficulty
+    and sets the difficulty based
+    on their choice (if valid)
+    """
     diff = input("What difficulty? [E]asy [m]edium [h]ard : ")
     word_list = []
     diff = diff.lower()
@@ -100,14 +125,26 @@ def ask_difficulty(words):
 
 
 def number_of_letters(word):
+    """
+    Displays the length of the word
+    """
     print("The number of letters in your word is: {}".format(len(word)))
 
 
 def welcome():
+    """
+    Welcomes the player to the game
+    """
     print("Welcome to the Mystery Word game!")
 
 
 def guess():
+    """
+    Takes player input of a single letter
+    or 'quit'
+    and returns the guess if valid, repeats
+    if not, and quits the main loop if 'quit'
+    """
 
     this_guess = input("Type \"quit\" to exit. Your Guess: ")
 
@@ -122,6 +159,12 @@ def guess():
 
 
 def import_words(path):
+    """
+    Imports the list of words from the
+    specified path
+    requires one word per line
+    """
+
     text = ''
     with open(path, 'r') as file:
         text = file.readlines()
@@ -130,6 +173,10 @@ def import_words(path):
 
 
 def clean_text(text):
+    """
+    Strips the text, lowercases it
+    and returns it in list form
+    """
     return [line.strip().lower() for line in text]
 
 if __name__ == '__main__':
