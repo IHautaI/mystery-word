@@ -32,6 +32,7 @@ def loop(words):
     word_length = random.choice(word_length)
 
     word_list = [item for item in words if len(item) == word_length]
+    print('number of words: {}'.format(len(word_list)))
     guesses = []
     correct_guess = []
 
@@ -56,11 +57,13 @@ def loop(words):
             break
 
         # check families here, set word, reduce list to chosen family
-        word, word_list = demon.check_families(guesses[-1], word_list, word)
+        new_word, word_list = demon.check_families(guesses[-1], word_list, word)
 
-        correct_guess.append(guesses.pop())
+        if new_word != word:
+            correct_guess.append(guesses.pop())
+            word = new_word
 
-        if [blank for blank in word if blank == '_']:
+        if not [blank for blank in word if blank == '_']:
             you_win(word)
             break
 

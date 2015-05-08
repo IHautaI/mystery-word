@@ -14,9 +14,10 @@ def check_families(guess, word_list, word):
     then evaluates which family is best
     and returns the matching new word
     """
+
     families = []
-    indices = pull_indices(word) 
-    combos = searcher(indices)
+    indices = pull_indices(word) # index of '_'s in list
+    combos = searcher(indices) # finds all combinations of indices
 
     for combo in combos:
 
@@ -25,9 +26,13 @@ def check_families(guess, word_list, word):
         if filter_list(word_list, term, guess):
             families.append((term, filter_list(word_list, term, guess)))
 
-    families.append((word, word_list))
+    #families.append((word, word_list))
     families = sorted(families, key=lambda x: len(x[1]), reverse = True)
-    word, fam = families[1]
+    if families:
+        word, fam = families[0]
+
+    else:
+        fam = word_list
 
     return word, fam
 
@@ -78,8 +83,8 @@ def filter_list(word_list, word, repl=None):
     """
     takes word and finds
     all matching words in word_list
-    with wildcard letters subbed
-    for the '_' entries
+    with [^{repl}] subbed
+    for the '_' entries where needed
     """
 
     letters = [letter for letter in word]
@@ -95,11 +100,12 @@ def filter_list(word_list, word, repl=None):
     if repl != None:
         letters = replace(word, repl_index, repl)
 
-    remove_list = []
+    return_list = []
     for entry in word_list:
-        if not re.match(r'{}'.format(letters), entry):
-            remove_list.append(entry)
+        new = re.match(r'{}'.format(letters), entry)
+        if new:
+            return_list.append(entry)
 
-    word_list = [entry for entry in word_list if entry not in remove_list]
+    #word_list = [entry for entry in word_list if entry not in remove_list]
 
-    return word_list
+    return return_list
