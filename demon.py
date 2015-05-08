@@ -1,5 +1,5 @@
 import re
-
+import itertools
 
 # recursive search to get all possibilities
 # from replacing _'s with guess, multiple allowed
@@ -15,47 +15,34 @@ def check_families(guess, word_list, word):
     and returns the matching new word
     """
     families = []
-    indices = pull_indices(word) # finds location of '_'s in word
-    combos = searcher(0, indices) # finds all combinations
+    indices = pull_indices(word) 
+    combos = searcher(indices)
 
     for combo in combos:
-        term = replace(word, combo, guess) # replaces the specified '_' with guess
-        families.append((term, filter_list(word_list, term))) # adds matching words
 
-    print(families)
-    families.append((word, word_list)) # add on the whole list for comparison
+        term = replace(word, combo, guess)
+
+        if filter_list(word_list, term, guess):
+            families.append((term, filter_list(word_list, term, guess)))
+
+    families.append((word, word_list))
     families = sorted(families, key=lambda x: len(x[1]), reverse = True)
-    word, fam = families[1] # taking the largest match (other than full list)
+    word, fam = families[1]
 
     return word, fam
 
 
-def searcher(index,index_list):
+def searcher(index_list):
     """
-    recursively calculates combinations of items
-    from index_list and returns them as a list
+    Calculates all combinations from
+    input list
     """
     return_list = []
-
-    if index == 0:
-        return_list.append(index_list)
-        if len(index_list) > index+1:
-            return_list.extend(searcher(0,index_list[index+1:]))
-    else:
-        if len(index_list) > index + 1:
-            return_list.append(index_list[:index]+index_list[index+1:])
-        else:
-            if len(index_list) == index:
-                return_list.append(index_list[:index])
-            return_list.append([index_list[0]])
-
-    if len(index_list) > index + 1:
-        return_list.extend(searcher(index+1,index_list))
+    for num in range(1, len(index_list)+1):
+        item = map(list, itertools.combinations(index_list, num))
+        return_list.extend(list(item))
 
     return return_list
-
-
-
 
 def pull_indices(word):
     """
@@ -87,7 +74,7 @@ def replace(word, indices, letter):
     return return_word
 
 
-def filter_list(word_list, word):
+def filter_list(word_list, word, repl=None):
     """
     takes word and finds
     all matching words in word_list
@@ -96,15 +83,21 @@ def filter_list(word_list, word):
     """
 
     letters = [letter for letter in word]
+    if repl != None:
+        repl = '[^{}]'.format(repl)
+        repl_index = []
+        for index, letter in enumerate(letters):
 
-    for index in range(len(letters)):
-        if letters[index] == '_':
-            letters[index] = '\w'
+            if letter == '_':
+                repl_index.append(index)
 
     letters = ''.join(letters)
+    if repl != None:
+        letters = replace(word, repl_index, repl)
+
     remove_list = []
     for entry in word_list:
-        if not re.match(r'({})'.format(letters), entry):
+        if not re.match(r'{}'.format(letters), entry):
             remove_list.append(entry)
 
     word_list = [entry for entry in word_list if entry not in remove_list]

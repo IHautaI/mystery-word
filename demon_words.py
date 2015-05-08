@@ -36,13 +36,15 @@ def loop(words):
     correct_guess = []
 
     number_of_letters(word_length)
-    word = '_ '*(word_length-1) + '_'
+    word = '_'*word_length
+
     while True:
         if len(guesses) > 7:
             you_lose(random.choice(check_families(guesses, word_list, word)))
             break
 
         this_guess = guess()
+
         while this_guess in guesses or this_guess in correct_guess:
             print("You already guessed {}!".format(this_guess.upper()))
             this_guess = guess()
