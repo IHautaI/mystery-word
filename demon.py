@@ -1,12 +1,30 @@
+import re
+
+
 # recursive search to get all possibilities
 # from replacing _'s with guess, multiple allowed
 # use filter_list here to make the families
 # then evaluate which to use and
 # return corresponding word
 def check_families(guess, word_list, word):
+    """
+    filters word_list and sorts into families
+    based on matches to word with the guess
+    replacing any combination of '_'s,
+    then evaluates which family is best
+    and returns the matching new word
+    """
     families = []
     indices = pull_indices(word)
     combos = searcher(0,indices)
+
+    for combo in combos:
+        term = replace(word,combo,guess)
+        families.append((term,filter_list(word_list,term)))
+
+    families.append(word_list)
+    families = sorted(families, key=lambda x: len(x[1]),reverse = True)
+    word = families[1][0]
 
     return word
 
@@ -70,6 +88,12 @@ def replace(word,indices,letter):
 
 # Tested
 def filter_list(word_list, word):
+    """
+    takes word and finds
+    all matching words in word_list
+    with wildcard letters subbed
+    for the '_' entries
+    """
     word_list = word_list[:]
 
     letters = [letter for letter in word]

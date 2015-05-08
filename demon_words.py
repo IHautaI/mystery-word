@@ -4,7 +4,6 @@ import demon
 
 import os
 import random
-import re
 
 
 def main():
@@ -29,7 +28,7 @@ def loop(words):
     """
     welcome()
 
-    word_length = ask_difficulty(words)
+    word_length = ask_difficulty(max(map(len,words)))
     word_length = random.choice(word_length)
 
     word_list = [item for item in words if len(item) == word_length]
@@ -55,8 +54,10 @@ def loop(words):
             break
 
         # check families here, set word, reduce list to chosen family
-        word = check_families(guesses[-1], word_list, word)
-        word_list = filter_list(word_list, word)
+        word = demon.check_families(guesses[-1], word_list, word)
+        word_list = demon.filter_list(word_list, word)
+
+        correct_guesses.append(guesses.pop())
 
         if len(correct_guesses) == word_length:
             you_win(word)
@@ -77,48 +78,6 @@ def display(word):
     letters = [letter for letter in word]
     return " ".join(letters)
 
-
-# recursive search to get all possibilities
-# from replacing _'s with guess, multiple allowed
-# use filter_list here to make the families
-# then evaluate which to use and
-# return corresponding word
-def check_families(guess, word_list, word):
-    families = []
-    indices = pull_indices(word)
-
-
-    return word
-
-def pull_indices(word):
-    """
-    finds the underscores in word
-    and returns their indices as
-    a list
-    """
-    index_list = []
-    for index,letter in enumerate(word):
-        if letter == '_':
-            index_list.append(index)
-
-    return index_list
-
-# Tested
-def filter_list(word_list, word):
-    word_list = word_list[:]
-
-    letters = [letter for letter in word]
-    for index in range(len(letters)):
-        if letters[index] == '_':
-            letters[index] = '\w'
-
-    letters = ''.join(letters)
-
-    for word in word_list:
-        if not re.match(r'{}'.format(letters), word):
-            word_list.remove(word)
-
-    return word_list
 
 
 def you_lose(word):
@@ -147,7 +106,7 @@ def play_again():
         return False
 
 
-def ask_difficulty(words):
+def ask_difficulty(words_max):
     diff = input("What difficulty? [E]asy [m]edium [h]ard : ")
     word_list = []
     diff = diff.lower()
@@ -161,7 +120,7 @@ def ask_difficulty(words):
     elif diff == 'm':
         word_list = [6, 7, 8]
     else:
-        word_list = range(8, max(words, key=len))
+        word_list = range(8,words_max)
 
     return word_list
 
