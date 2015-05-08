@@ -54,12 +54,11 @@ def loop(words):
             break
 
         # check families here, set word, reduce list to chosen family
-        word = demon.check_families(guesses[-1], word_list, word)
-        word_list = demon.filter_list(word_list, word)
+        word, word_list = demon.check_families(guesses[-1], word_list, word)
 
-        correct_guesses.append(guesses.pop())
+        correct_guess.append(guesses.pop())
 
-        if len(correct_guesses) == word_length:
+        if [blank for blank in word if blank == '_']:
             you_win(word)
             break
 

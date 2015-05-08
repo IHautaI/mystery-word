@@ -15,18 +15,19 @@ def check_families(guess, word_list, word):
     and returns the matching new word
     """
     families = []
-    indices = pull_indices(word)
-    combos = searcher(0,indices)
+    indices = pull_indices(word) # finds location of '_'s in word
+    combos = searcher(0, indices) # finds all combinations
 
     for combo in combos:
-        term = replace(word,combo,guess)
-        families.append((term,filter_list(word_list,term)))
+        term = replace(word, combo, guess) # replaces the specified '_' with guess
+        families.append((term, filter_list(word_list, term))) # adds matching words
 
-    families.append(word_list)
-    families = sorted(families, key=lambda x: len(x[1]),reverse = True)
-    word = families[1][0]
+    print(families)
+    families.append((word, word_list)) # add on the whole list for comparison
+    families = sorted(families, key=lambda x: len(x[1]), reverse = True)
+    word, fam = families[1] # taking the largest match (other than full list)
 
-    return word
+    return word, fam
 
 
 def searcher(index,index_list):
@@ -70,7 +71,7 @@ def pull_indices(word):
     return index_list
 
 
-def replace(word,indices,letter):
+def replace(word, indices, letter):
     """
     replaces the letters in the word
     at the index specified
@@ -86,7 +87,6 @@ def replace(word,indices,letter):
     return return_word
 
 
-# Tested
 def filter_list(word_list, word):
     """
     takes word and finds
@@ -94,17 +94,19 @@ def filter_list(word_list, word):
     with wildcard letters subbed
     for the '_' entries
     """
-    word_list = word_list[:]
 
     letters = [letter for letter in word]
+
     for index in range(len(letters)):
         if letters[index] == '_':
             letters[index] = '\w'
 
     letters = ''.join(letters)
+    remove_list = []
+    for entry in word_list:
+        if not re.match(r'({})'.format(letters), entry):
+            remove_list.append(entry)
 
-    for word in word_list:
-        if not re.match(r'{}'.format(letters), word):
-            word_list.remove(word)
+    word_list = [entry for entry in word_list if entry not in remove_list]
 
     return word_list
