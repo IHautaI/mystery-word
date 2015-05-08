@@ -1,9 +1,10 @@
 # for hard mode
-import mystery_word as mw
+# import mystery_word as mw
 
 import os
 import random
 import re
+
 
 def main():
 
@@ -23,15 +24,15 @@ def loop(words):
     word_length = ask_difficulty(words)
     word_length = random.choice(word_length)
 
-    word_list = [item for item in word_list if len(item) == word_length]
+    word_list = [item for item in words if len(item) == word_length]
     guesses = []
     correct_guess = []
 
-    number_of_letters(word_len)
-
+    number_of_letters(word_length)
+    word = '_ '*(word_length-1) + '_'
     while True:
         if len(guesses) > 7:
-            you_lose(random.choice(check_families(guesses,word_list,word)))
+            you_lose(random.choice(check_families(guesses, word_list, word)))
             break
 
         this_guess = guess()
@@ -46,8 +47,8 @@ def loop(words):
             break
 
         # check families here, set word, reduce list to chosen family
-        word = check_families(guesses[-1],word_list,word)
-        word_list = filter_list(word_list,word)
+        word = check_families(guesses[-1], word_list, word)
+        word_list = filter_list(word_list, word)
 
         if len(correct_guesses) == word_length:
             you_win(word)
@@ -55,7 +56,7 @@ def loop(words):
 
         os.system('clear')
         print("Incorrect Guesses ({}, 8 max): [ {} ]".format(len(guesses),
-            " ".join(guesses).upper()))
+              " ".join(guesses).upper()))
 
         print(display(word))
 
@@ -64,15 +65,20 @@ def display(word):
     letters = [letter for letter in word]
     return " ".join(letters)
 
-#recursive search to get all possibilities
-#from replacing _'s with guess, multiple allowed
-def check_families(guess,word_list,word):
+
+# recursive search to get all possibilities
+# from replacing _'s with guess, multiple allowed
+# use filter_list here to make the families
+# then evaluate which to use and
+# return corresponding word
+def check_families(guess, word_list, word):
     families = []
 
     return word
 
-#Tested
-def filter_list(word_list,word):
+
+# Tested
+def filter_list(word_list, word):
     word_list = word_list[:]
 
     letters = [letter for letter in word]
@@ -83,7 +89,7 @@ def filter_list(word_list,word):
     letters = ''.join(letters)
 
     for word in word_list:
-        if not re.match(r'{}'.format(letters),word):
+        if not re.match(r'{}'.format(letters), word):
             word_list.remove(word)
 
     return word_list
@@ -104,7 +110,7 @@ def you_win(word):
 def play_again():
     yes_no = input("Would you like to play again? [Y]es [n]o : ")
 
-    if len(yes_no)>1 or yes_no.lower() not in 'yn':
+    if len(yes_no) > 1 or yes_no.lower() not in 'yn':
         return play_again()
 
     if yes_no == 'y':
@@ -125,11 +131,11 @@ def ask_difficulty(words):
     os.system('clear')
 
     if diff == 'e':
-        word_list = [4,5,6]
+        word_list = [4, 5, 6]
     elif diff == 'm':
-        word_list = [6,7,8]
+        word_list = [6, 7, 8]
     else:
-        word_list = range(8,max(words,key=len))
+        word_list = range(8, max(words, key=len))
 
     return word_list
 
@@ -146,7 +152,7 @@ def guess():
 
     this_guess = input("Type \"quit\" to exit. Your Guess: ")
 
-    if len(this_guess)>1 or not this_guess.isalpha():
+    if len(this_guess) > 1 or not this_guess.isalpha():
         if this_guess.lower() == 'quit':
             return 'quit'
 
