@@ -44,14 +44,14 @@ def loop(words):
         if guesses[-1] in word:
             correct_guess.append(guesses.pop())
 
-        if mw.is_word_complete(word,correct_guess):
+        if mw.is_word_complete(word, correct_guess):
             you_win(word)
             break
 
         os.system('clear')
         print("Incorrect Guesses ({}, 8 max): [ {} ]".format(len(guesses),
-            " ".join(guesses).upper()))
-        print(mw.display_word(word,correct_guess))
+              " ".join(guesses).upper()))
+        print(mw.display_word(word, correct_guess))
 
 
 def you_lose(word):
@@ -69,7 +69,7 @@ def you_win(word):
 def play_again():
     yes_no = input("Would you like to play again? [Y]es [n]o : ")
 
-    if len(yes_no)>1 or yes_no.lower() not in 'yn':
+    if len(yes_no) > 1 or yes_no.lower() not in 'yn':
         return play_again()
 
     if yes_no == 'y':
@@ -111,7 +111,7 @@ def guess():
 
     this_guess = input("Type \"quit\" to exit. Your Guess: ")
 
-    if len(this_guess)>1 or not this_guess.isalpha():
+    if len(this_guess) > 1 or not this_guess.isalpha():
         if this_guess.lower() == 'quit':
             return 'quit'
 
