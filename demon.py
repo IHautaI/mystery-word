@@ -99,6 +99,6 @@ def filter_list(word_list, word, repl=None):
     if repl != None:
         repl = '[^{}]'.format(repl)
         repl_index = pull_indices(word)
-        letters = replace(word, repl_index, repl)
+        word = replace(word, repl_index, repl)
 
     return [entry for entry in word_list if re.match(r'{}'.format(word), entry)]

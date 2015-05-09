@@ -1,4 +1,5 @@
 from mystery_word import *
+
 import nose
 
 word_list = ["bird", "calf", "river", "stream", "kneecap",  "cookbook",
