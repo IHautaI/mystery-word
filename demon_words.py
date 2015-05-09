@@ -28,7 +28,7 @@ def loop(words):
     """
     welcome()
 
-    word_length = ask_difficulty(max(map(len,words)))
+    word_length = ask_difficulty(max(map(len, words)))
     word_length = random.choice(word_length)
 
     word_list = [item for item in words if len(item) == word_length]
@@ -84,7 +84,6 @@ def display(word):
     return " ".join(letters)
 
 
-
 def you_lose(word):
     os.system('clear')
     print("You did not guess the word!")
@@ -117,7 +116,7 @@ def ask_difficulty(words_max):
     diff = diff.lower()
 
     if diff not in 'emh':
-        return ask_difficulty(words)
+        return ask_difficulty(words_max)
     os.system('clear')
 
     if diff == 'e':
@@ -125,7 +124,7 @@ def ask_difficulty(words_max):
     elif diff == 'm':
         word_list = [6, 7, 8]
     else:
-        word_list = range(8,words_max)
+        word_list = range(8, words_max)
 
     return word_list
 

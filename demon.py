@@ -2,6 +2,7 @@ import re
 import itertools
 import random
 
+
 def demonize(families, num):
     """
     picks whether or not a
@@ -15,7 +16,6 @@ def demonize(families, num):
         return random.choice(families)
 
 
-
 def check_families(guess, word_list, word, num):
     """
     filters word_list and sorts into families
@@ -26,8 +26,8 @@ def check_families(guess, word_list, word, num):
     """
 
     families = []
-    indices = pull_indices(word) # index of '_'s in list
-    combos = searcher(indices) # list of combinations of indices
+    indices = pull_indices(word)  # index of '_'s in list
+    combos = searcher(indices)  # list of combinations of indices
     print('number of combinations: {}'.format(len(combos)))
     for combo in combos:
 
@@ -56,14 +56,16 @@ def searcher(index_list):
 
     return return_list
 
+
 def pull_indices(word):
     """
     finds the underscores in word
     and returns their indices as
     a list
     """
+
     index_list = []
-    for index,letter in enumerate(word):
+    for index, letter in enumerate(word):
         if letter == '_':
             index_list.append(index)
 
@@ -78,7 +80,7 @@ def replace(word, indices, letter):
     """
     if indices:
         return_word = ''
-        for index,this_letter in enumerate(word):
+        for index, this_letter in enumerate(word):
             if index in indices:
                 return_word += letter
             else:
@@ -96,9 +98,10 @@ def filter_list(word_list, word, repl=None):
     for the '_' entries where needed
     """
 
-    if repl != None:
+    if repl is not None:
         repl = '[^{}]'.format(repl)
         repl_index = pull_indices(word)
         word = replace(word, repl_index, repl)
 
-    return [entry for entry in word_list if re.match(r'{}'.format(word), entry)]
+    return [entry for entry in word_list if
+            re.match(r'{}'.format(word), entry)]
