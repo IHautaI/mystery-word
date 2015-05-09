@@ -9,14 +9,11 @@ def demonize(families, num):
     based on number of guesses wrong
     and current word families
     """
-    #choice = random.choice([True, False])
-
     if num == 7:
         return max(families, key=lambda x: len(x[1]))
     else:
         return random.choice(families)
 
-        #return max(families[:-1], key=lambda x: len(x[1]))
 
 
 def check_families(guess, word_list, word, num):
@@ -27,19 +24,17 @@ def check_families(guess, word_list, word, num):
     then evaluates which family is best
     and returns the matching new word
     """
+
     families = []
     indices = pull_indices(word) # index of '_'s in list
     combos = searcher(indices) # list of combinations of indices
-
+    print('number of combinations: {}'.format(len(combos)))
     for combo in combos:
 
         term = replace(word, combo, guess)
-
-        if filter_list(word_list, term, guess):
-            families.append((term, filter_list(word_list, term, guess)))
-
-    #families.append((word,word_list))
-    #families = sorted(families, key=lambda x: len(x[1]), reverse = True)
+        result = filter_list(word_list, term, guess)
+        if result:
+            families.append((term, result))
 
     if families:
         word, fam = demonize(families, num)
@@ -55,7 +50,7 @@ def searcher(index_list):
     input list
     """
     return_list = []
-    for num in range(1, len(index_list)+1):
+    for num in range(0, len(index_list)+1):
         item = map(list, itertools.combinations(index_list, num))
         return_list.extend(list(item))
 
@@ -81,21 +76,16 @@ def replace(word, indices, letter):
     at the index specified
     with the given letter
     """
-    return_word = ''
-    for index,this_letter in enumerate(word):
-        if index in indices:
-            return_word += letter
-        else:
-            return_word += this_letter
+    if indices:
+        return_word = ''
+        for index,this_letter in enumerate(word):
+            if index in indices:
+                return_word += letter
+            else:
+                return_word += this_letter
+        word = return_word
 
-    return return_word
-
-
-def match(entry,letters):
-    """
-    matches letters in entry
-    """
-    return re.match(r'{}'.format(letters), entry)
+    return word
 
 
 def filter_list(word_list, word, repl=None):
@@ -105,18 +95,10 @@ def filter_list(word_list, word, repl=None):
     with [^{repl}] subbed
     for the '_' entries where needed
     """
-    letters = [letter for letter in word]
 
     if repl != None:
         repl = '[^{}]'.format(repl)
-        repl_index = []
-        for index, letter in enumerate(letters):
-
-            if letter == '_':
-                repl_index.append(index)
-
-    letters = ''.join(letters)
-    if repl != None:
+        repl_index = pull_indices(word)
         letters = replace(word, repl_index, repl)
 
-    return [entry for entry in word_list if match(entry,letters)]
+    return [entry for entry in word_list if re.match(r'{}'.format(word), entry)]
