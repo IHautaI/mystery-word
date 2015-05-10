@@ -32,7 +32,7 @@ def loop(words):
     word_length = random.choice(word_length)
 
     word_list = [item for item in words if len(item) == word_length]
-    print('number of words: {}'.format(len(word_list)))
+    #print('number of words: {}'.format(len(word_list)))
     guesses = []
     correct_guess = []
 
@@ -112,7 +112,7 @@ def play_again():
 
 def ask_difficulty(words_max):
     diff = input("What difficulty? [E]asy [m]edium [h]ard : ")
-    word_list = []
+    size = []
     diff = diff.lower()
 
     if diff not in 'emh':
@@ -120,13 +120,13 @@ def ask_difficulty(words_max):
     os.system('clear')
 
     if diff == 'e':
-        word_list = [4, 5, 6]
+        size = [4, 5, 6]
     elif diff == 'm':
-        word_list = [6, 7, 8]
+        size = [6, 7, 8]
     else:
-        word_list = range(8, words_max)
+        size = range(8, words_max)
 
-    return word_list
+    return size
 
 
 def number_of_letters(word_len):

@@ -28,13 +28,16 @@ def check_families(guess, word_list, word, num):
     families = []
     indices = pull_indices(word)  # index of '_'s in list
     combos = searcher(indices)  # list of combinations of indices
-    print('number of combinations: {}'.format(len(combos)))
+    #print('number of combinations: {}'.format(len(combos)))
     for combo in combos:
 
         term = replace(word, combo, guess)
         result = filter_list(word_list, term, guess)
         if result:
             families.append((term, result))
+
+            for entry in result:
+                word_list.remove(entry)
 
     if families:
         word, fam = demonize(families, num)
