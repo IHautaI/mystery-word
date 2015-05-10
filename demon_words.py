@@ -12,6 +12,7 @@ def main():
     and calls play_again to ask
     if you want to play again
     """
+
     words = import_words('/usr/share/dict/words')
     loop(words)
 
@@ -24,15 +25,14 @@ def main():
 def loop(words):
     """
     The main loop
-
     """
+
     welcome()
 
     word_length = ask_difficulty(max(map(len, words)))
     word_length = random.choice(word_length)
 
     word_list = [item for item in words if len(item) == word_length]
-    #print('number of words: {}'.format(len(word_list)))
     guesses = []
     correct_guess = []
 
@@ -56,7 +56,6 @@ def loop(words):
             os.system('clear')
             break
 
-        # check families here, reduce list to chosen family
         new_word, word_list = demon.check_families(guesses[-1], word_list,
                                                    word, len(guesses))
 
@@ -64,7 +63,7 @@ def loop(words):
             correct_guess.append(guesses.pop())
             word = new_word
 
-        if not demon.pull_indices(word,'_'):
+        if not demon.pull_indices(word, '_'):
             you_win(word)
             break
 

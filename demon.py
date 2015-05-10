@@ -1,5 +1,4 @@
 import re
-import itertools
 import random
 
 
@@ -10,9 +9,11 @@ def demonize(families, num):
     based on number of guesses wrong
     and current word families
     """
+
     if num == 7:
-        fam = [(key,value) for key,value in families.items()]
-        return max(fam,key = lambda x: len(x[1]))
+        fam = [(key, value) for key, value in families.items()]
+        return max(fam, key=lambda x: len(x[1]))
+
     else:
         key = random.choice(list(families.keys()))
         return key, families[key]
@@ -34,11 +35,11 @@ def check_families(guess, word_list, word, num):
         for item in words:
 
             indices = pull_indices(item, guess)
-            term = replace(word, indices, guess)
-            result = filter_list(words, term, guess)
+            search_term = replace(word, indices, guess)
+            result = filter_list(words, search_term, guess)
 
             if result:
-                families[term] = result
+                families[search_term] = result
 
                 for entry in result:
                     words.remove(entry)
@@ -53,14 +54,15 @@ def check_families(guess, word_list, word, num):
 
     return word, fam
 
-"""
-Returns True if item contains guess
-"""
-def contains(item,guess):
-    return re.findall(r'{}'.format(guess),item) != []
+
+def contains(item, guess):
+    """
+    Returns True if item contains guess
+    """
+    return re.findall(r'{}'.format(guess), item) != []
 
 
-def pull_indices(word,letter):
+def pull_indices(word, letter):
     """
     finds the underscores in word
     and returns their indices as
@@ -103,7 +105,7 @@ def filter_list(word_list, word, repl=None):
 
     if repl is not None:
         repl = '[^{}]'.format(repl)
-        repl_index = pull_indices(word,'_')
+        repl_index = pull_indices(word, '_')
         word = replace(word, repl_index, repl)
 
     return [entry for entry in word_list if
