@@ -56,15 +56,15 @@ def loop(words):
             os.system('clear')
             break
 
-        # check families here, set word, reduce list to chosen family
+        # check families here, reduce list to chosen family
         new_word, word_list = demon.check_families(guesses[-1], word_list,
-                                                   word, len(guesses)-1)
+                                                   word, len(guesses))
 
         if new_word != word:
             correct_guess.append(guesses.pop())
             word = new_word
 
-        if not [blank for blank in word if blank == '_']:
+        if not demon.pull_indices(word,'_'):
             you_win(word)
             break
 

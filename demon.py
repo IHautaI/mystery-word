@@ -11,9 +11,11 @@ def demonize(families, num):
     and current word families
     """
     if num == 7:
-        return max(families, key=lambda x: len(x[1]))
+        fam = [(key,value) for key,value in families.items()]
+        return max(fam,key = lambda x: len(x[1]))
     else:
-        return random.choice(families)
+        key = random.choice(list(families.keys()))
+        return key, families[key]
 
 
 def check_families(guess, word_list, word, num):
@@ -25,42 +27,40 @@ def check_families(guess, word_list, word, num):
     and returns the matching new word
     """
 
-    families = []
-    indices = pull_indices(word)  # index of '_'s in list
-    combos = searcher(indices)  # list of combinations of indices
-    #print('number of combinations: {}'.format(len(combos)))
-    for combo in combos:
+    families = {}
+    words = [item for item in word_list if contains(item, guess)]
 
-        term = replace(word, combo, guess)
-        result = filter_list(word_list, term, guess)
-        if result:
-            families.append((term, result))
+    if words:
+        for item in words:
 
-            for entry in result:
-                word_list.remove(entry)
+            indices = pull_indices(item, guess)
+            term = replace(word, indices, guess)
+            result = filter_list(words, term, guess)
 
-    if families:
-        word, fam = demonize(families, num)
+            if result:
+                families[term] = result
+
+                for entry in result:
+                    words.remove(entry)
+
+        if families:
+            word, fam = demonize(families, num)
+        else:
+            fam = words
+
     else:
-        fam = word_list
+        return word, word_list
 
     return word, fam
 
-
-def searcher(index_list):
-    """
-    Calculates all combinations from
-    input list
-    """
-    return_list = []
-    for num in range(0, len(index_list)+1):
-        item = map(list, itertools.combinations(index_list, num))
-        return_list.extend(list(item))
-
-    return return_list
+"""
+Returns True if item contains guess
+"""
+def contains(item,guess):
+    return re.findall(r'{}'.format(guess),item) != []
 
 
-def pull_indices(word):
+def pull_indices(word,letter):
     """
     finds the underscores in word
     and returns their indices as
@@ -68,8 +68,8 @@ def pull_indices(word):
     """
 
     index_list = []
-    for index, letter in enumerate(word):
-        if letter == '_':
+    for index, let in enumerate(word):
+        if let == letter:
             index_list.append(index)
 
     return index_list
@@ -103,7 +103,7 @@ def filter_list(word_list, word, repl=None):
 
     if repl is not None:
         repl = '[^{}]'.format(repl)
-        repl_index = pull_indices(word)
+        repl_index = pull_indices(word,'_')
         word = replace(word, repl_index, repl)
 
     return [entry for entry in word_list if
