@@ -2,7 +2,7 @@ import re
 import random
 
 
-def demonize(families, num):
+def demonize(families, guesses):
     """
     picks whether or not a
     guess will be correct
@@ -10,56 +10,81 @@ def demonize(families, num):
     and current word families
     """
 
-    if num == 7:
-        fam = [(key, value) for key, value in families.items()]
-        return max(fam, key=lambda x: len(x[1]))
+    if len(guesses) == 8:
+        fam = [(key, value) for key, value in families.items()
+               if not contains(key, guesses)]
+        if fam:
+            return max(fam, key=lambda x: len(x[1]))
+
+        return random.choice([(key, value) for key, value in families.items()
+                              if contains(key, guesses)])
 
     else:
-        key = random.choice(list(families.keys()))
+        rand_key = random.choice(list(families.keys()))
+
+        key_list = [keys for keys in families.keys()]
+        key_list = sorted(key_list, key=lambda x: len(pull_indices(x, '_')),
+                          reverse=True)
+
+        length = max([len(key_list)//2, 1])
+
+        key = random.choice(key_list[:length])
+        key = random.choice([key, rand_key])
+
         return key, families[key]
 
 
-def check_families(guess, word_list, word, num):
+def check_families(guesses, word_list, word):
     """
     filters word_list and sorts into families
     based on matches to word with the guess
     replacing any combination of '_'s,
     then evaluates which family is best
-    and returns the matching new word
+    and returns the matching new word and the
+    corresponding word family
     """
 
     families = {}
-    words = [item for item in word_list if contains(item, guess)]
+    guess = guesses[-1]
+    words = [item for item in word_list if contains(item, [guess]) and
+             not contains(item, guesses[:-1])]
 
-    if words:
+    if words:  # if there are any matches with this guess, partition
         for item in words:
 
+            result = None
             indices = pull_indices(item, guess)
             search_term = replace(word, indices, guess)
-            result = filter_list(words, search_term, guess)
+
+            if search_term not in families.keys():
+                result = filter_list(words, search_term, guess)
 
             if result:
                 families[search_term] = result
 
-                for entry in result:
-                    words.remove(entry)
+        new_list = [item for item in word_list if not contains(item, guesses)]
 
-        if families:
-            word, fam = demonize(families, num)
-        else:
-            fam = words
+        if new_list:
+            families[word] = new_list
+
+        return demonize(families, guesses)
 
     else:
-        return word, word_list
+        return word, [item for item in word_list
+                      if not contains(item, guesses)]
 
-    return word, fam
 
-
-def contains(item, guess):
+def contains(item, guesses):
     """
-    Returns True if item contains guess
+    Returns True if item contains any guess from guesses
     """
-    return re.findall(r'{}'.format(guess), item) != []
+
+    return_list = []
+    if guesses:
+        for letter in guesses:
+            return_list.extend(re.findall(r'{}'.format(letter), item))
+
+    return return_list != []
 
 
 def pull_indices(word, letter):
@@ -71,6 +96,7 @@ def pull_indices(word, letter):
 
     index_list = []
     for index, let in enumerate(word):
+
         if let == letter:
             index_list.append(index)
 
@@ -83,9 +109,11 @@ def replace(word, indices, letter):
     at the index specified
     with the given letter
     """
+
     if indices:
         return_word = ''
         for index, this_letter in enumerate(word):
+
             if index in indices:
                 return_word += letter
             else:

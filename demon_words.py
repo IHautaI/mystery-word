@@ -1,5 +1,3 @@
-# for hard mode
-# import mystery_word as mw
 import demon
 
 import os
@@ -28,11 +26,13 @@ def loop(words):
     """
 
     welcome()
-
+    word_list = []
     word_length = ask_difficulty(max(map(len, words)))
-    word_length = random.choice(word_length)
 
-    word_list = [item for item in words if len(item) == word_length]
+    while not word_list:
+        word_length = random.choice(word_length)
+        word_list = [item for item in words if len(item) == word_length]
+
     guesses = []
     correct_guess = []
 
@@ -41,6 +41,8 @@ def loop(words):
 
     while True:
         if len(guesses) > 7:
+            os.system('clear')
+            print('Incorrect guesses: {}'.format(guesses))
             you_lose(random.choice(word_list))
             break
 
@@ -56,8 +58,7 @@ def loop(words):
             os.system('clear')
             break
 
-        new_word, word_list = demon.check_families(guesses[-1], word_list,
-                                                   word, len(guesses))
+        new_word, word_list = demon.check_families(guesses, word_list, word)
 
         if new_word != word:
             correct_guess.append(guesses.pop())
@@ -84,7 +85,6 @@ def display(word):
 
 
 def you_lose(word):
-    os.system('clear')
     print("You did not guess the word!")
     print("The word was: {}".format(word))
 
