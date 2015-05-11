@@ -37,7 +37,7 @@ def loop(words):
     correct_guess = []
 
     number_of_letters(word_length)
-    word = '_'*word_length
+    word = '_' * word_length
 
     while True:
         if len(guesses) > 7:

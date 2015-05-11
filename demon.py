@@ -26,7 +26,7 @@ def demonize(families, guesses):
         key_list = sorted(key_list, key=lambda x: len(pull_indices(x, '_')),
                           reverse=True)
 
-        length = max([len(key_list)//2, 1])
+        length = max([len(key_list) // 2, 1])
 
         key = random.choice(key_list[:length])
         key = random.choice([key, rand_key])
@@ -37,8 +37,6 @@ def demonize(families, guesses):
 def check_families(guesses, word_list, word):
     """
     filters word_list and sorts into families
-    based on matches to word with the guess
-    replacing any combination of '_'s,
     then evaluates which family is best
     and returns the matching new word and the
     corresponding word family
@@ -58,8 +56,6 @@ def check_families(guesses, word_list, word):
 
             if search_term not in families.keys():
                 result = filter_list(words, search_term, guess)
-
-            if result:
                 families[search_term] = result
 
         new_list = [item for item in word_list if not contains(item, guesses)]
