@@ -85,18 +85,12 @@ def contains(item, guesses):
 
 def pull_indices(word, letter):
     """
-    finds the underscores in word
+    finds letter if in word
     and returns their indices as
     a list
     """
 
-    index_list = []
-    for index, let in enumerate(word):
-
-        if let == letter:
-            index_list.append(index)
-
-    return index_list
+    return [index for index,let in enumerate(word) if let == letter]
 
 
 def replace(word, indices, letter):
